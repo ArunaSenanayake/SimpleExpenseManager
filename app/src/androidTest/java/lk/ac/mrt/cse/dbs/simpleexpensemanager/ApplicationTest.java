@@ -16,14 +16,44 @@
 
 package lk.ac.mrt.cse.dbs.simpleexpensemanager;
 
+import static org.junit.Assert.assertTrue;
+
 import android.app.Application;
+import android.content.Context;
 import android.test.ApplicationTestCase;
 
-/**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
- */
-public class ApplicationTest extends ApplicationTestCase<Application> {
-    public ApplicationTest() {
-        super(Application.class);
+import androidx.test.core.app.ApplicationProvider;
+
+import org.junit.*;
+
+
+import java.util.List;
+
+import lk.ac.mrt.cse.dbs.simpleexpensemanager.control.ExpenseManager;
+import lk.ac.mrt.cse.dbs.simpleexpensemanager.control.PersistentExpenseManager;
+import lk.ac.mrt.cse.dbs.simpleexpensemanager.control.exception.ExpenseManagerException;
+import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.Account;
+
+public class ApplicationTest{
+    private static ExpenseManager expMgr;
+
+    @Before
+    public void setup() throws ExpenseManagerException {
+        Context context=ApplicationProvider.getApplicationContext();
+        expMgr=new PersistentExpenseManager(context);
+    }
+
+    @Test
+    public void addAccount_test(){
+        expMgr.addAccount("1756","Bank1","Andrew Dean",7000.0);
+        List<String> acc_no_list=expMgr.getAccountNumbersList();
+        boolean b= acc_no_list.contains("1756");
+        assertTrue(b);
+    }
+
+    @Test
+    public void getData_test(){
+        List<Account> accounts=expMgr.getAccountsDAO().getAccountsList();
+        assertTrue(accounts.size()==2 && accounts.get(0).getAccountNo().equals("12345A") && accounts.get(1).getAccountNo().equals("78945Z"));
     }
 }
